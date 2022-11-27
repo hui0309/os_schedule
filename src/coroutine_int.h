@@ -1,6 +1,7 @@
 #ifndef __COROUTINE_INT_H__
 #define __COROUTINE_INT_H__
 
+#include <stdbool.h>
 #include "rbtree.h"
 #include "context.h"
 
@@ -50,6 +51,16 @@ void rq_init(struct rq *rq);
 int rq_enqueue(struct rq *rq, struct task_struct *task);
 struct task_struct *rq_dequeue(struct rq *rq);
 
+struct deq {
+    unsigned int out, in; 
+    unsigned int mask; /* the size is power of two, so mask will be size - 1 */
+    struct task_struct *arr[RINGBUFFER_SIZE];
+};
+
+void deq_init(struct deq *dq);
+int deq_enqueue(struct deq *dq, struct task_struct *task);
+struct task_struct *deq_dequeue(struct deq *dq);
+
 /* main data structure */
 
 #define MAX_CR_TABLE_SIZE 10
@@ -59,11 +70,10 @@ struct cr {
     int crfd; /* coroutine fd number */
     int flags; /* Which type of scheduler, FIFO or CFS */
     struct task_struct *current; /* the job currently working */
-
     /* scheduler - chose by the flags */
     struct rq rq; /* FIFO */
     struct rb_root root; /* Default */
-
+    struct deq dq; 
     /* sched operations */
     int (*schedule)(struct cr *cr, job_t func, void *args);
     struct task_struct *(*pick_next_task)(struct cr *cr);

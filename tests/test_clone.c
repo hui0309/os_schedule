@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
-#include "../coroutine.h"
+#include "../src/coroutine.h"
 
 #define UNUSED 0
 

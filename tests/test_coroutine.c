@@ -1,5 +1,7 @@
 #include <stdio.h>
-#include "../coroutine.h"
+#include <stdlib.h>
+#include <time.h>
+#include "../src/coroutine.h"
 
 COROUTINE_DEFINE(job)
 {
@@ -30,7 +32,7 @@ int main(void)
 {
     int crfd, tfd[10];
 
-    crfd = coroutine_create(CR_DEFAULT);
+    crfd = coroutine_create(CR_MINE);
     if (crfd < 0)
         return crfd;
 
